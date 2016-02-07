@@ -1,5 +1,7 @@
+# CORRECT, PERFECT
+
 with open("S3.in") as file:
-    inp = [int(i) for i in file.read().split('\n')]
+    inp = [int(i) for i in file.readlines()]
 
 list = []
 

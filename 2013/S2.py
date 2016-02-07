@@ -1,5 +1,7 @@
+# ALMOST PERFECT, 2.6.in was wrong
+
 with open("S2.in") as file:
-	inpu = [int(i) for i in file.read().split('\n')]
+	inpu = [int(i) for i in file.readlines()]
 
 maxWeight = inpu[0]
 cars = inpu[2:]

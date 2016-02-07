@@ -1,5 +1,7 @@
+# DOES NOT WORK AND TOO SLOW SOMETIMES
+
 with open("S5.in") as file:
-	inpu = file.read().split("\n")
+	inpu = file.readlines()
 
 locations = [[int(j) for j in i.split()] for i in inpu[1:]]
 
@@ -44,7 +46,7 @@ paths = [[distanceBetween(location, l) for l in locations] for location in [[0, 
 
 
 
-# Will work sometimes
+# Will rarely work
 
 def goToBest(point, maximum=False):
 	possiblePaths = paths[point+1]

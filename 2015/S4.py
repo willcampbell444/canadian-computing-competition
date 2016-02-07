@@ -1,5 +1,7 @@
-with open("in.txt") as file:
-	input = [i.split() for i in file.read().split("\n")]
+# DOes not really work
+
+with open("S4.in") as file:
+	input = [i.split() for i in file.readlines()]
 
 hull = input[0][0]
 start = input[-1][0]

@@ -1,5 +1,7 @@
+# TOO SLOW
+
 with open("S3.in") as file:
-    input = [int(i) for i in file.read().split("\n")]
+    input = [int(i) for i in file.readlines()]
 
 gates = [False for i in range(input[0])]
 planes = input[2:]

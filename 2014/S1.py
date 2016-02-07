@@ -1,3 +1,5 @@
+# CORRECT, PERFECT
+
 with open("S1.in") as file:
 	input = file.read().split()
 

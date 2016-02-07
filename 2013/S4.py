@@ -1,5 +1,7 @@
+# DECENT, GETS SLOW AND ERRORS ON 4.5-x
+
 with open("S4.in") as file:
-	inpu = file.read().split('\n')
+	inpu = file.readlines()
 
 students = int(inpu[0].split()[0])
 measurements = [[int(j) for j in i.split()] for i in inpu[1:-1]]

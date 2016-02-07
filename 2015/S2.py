@@ -1,3 +1,5 @@
+# Does not really work
+
 with open("S2.in") as file:
     input = file.read().split("\n")
 

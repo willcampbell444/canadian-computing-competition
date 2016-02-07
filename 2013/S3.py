@@ -1,7 +1,9 @@
+# WRONG FOR ALL INPUTS
+
 # This one took me a long time for some reason
 
 with open("S3.in") as file:
-	inpu = file.read().split('\n')
+	inpu = file.readlines()
 
 team = int(inpu[0])-1
 games = [[int(j)-1 for j in i.split()] for i in inpu[2:]]

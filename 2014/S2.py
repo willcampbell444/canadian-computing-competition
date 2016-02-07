@@ -1,4 +1,6 @@
-with open(".\S2.in") as file:
+# CORRECT, PERFECT
+
+with open("S2.in") as file:
     input = file.read().split("\n")
 
 numOfPeople = int(input[0])

@@ -1,4 +1,6 @@
-with open("in.txt") as file:
+# PERFECT
+
+with open("S1.in") as file:
     input = [int(i) for i in file.read().split()]
 
 list = []
