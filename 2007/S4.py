@@ -1,6 +1,32 @@
 with open("S4.in") as file:
 	inpu = file.read().strip().split('\n')[:-1]
 
+# SLOW RECURSIVE:
+
+# n = int(inpu[0])
+
+# pf = {}
+# for i in inpu[1:]:
+# 	x = i.split();
+# 	if int(x[1]) not in pf.keys():
+# 		pf[int(x[1])] = [int(x[0])]
+# 	else:
+# 		pf[int(x[1])].append(int(x[0]))
+
+# def pathsTo(p):
+# 	if p == 1:
+# 		return 1
+# 	else:
+# 		su = 0
+# 		for i in pf[p]:
+# 			su += pathsTo(i)
+# 		return su
+
+# print(pathsTo(n))
+
+
+# FAST GOOD:
+
 length = int(inpu.pop(0))
 nodes = [[] for i in range(length)]
 pp = [0 for i in range(length)]
