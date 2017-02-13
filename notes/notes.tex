@@ -1,0 +1,242 @@
+\documentclass[12pt]{article}
+
+\title{Canadien Computing Contest Notes}
+\author{Will Campbell}
+
+\usepackage{amsmath}
+\usepackage[margin=1in]{geometry}
+\usepackage{indentfirst}
+
+\usepackage{listings}
+\usepackage{color}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\lstset{frame=tb,
+  language=Python,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=3
+}
+
+\begin{document}
+
+\section{Basic Containers}
+\subsection{Lists}
+\begin{lstlisting}
+my_list = []
+
+my_list[index]
+# returns the item at the given index
+
+my_list[-1]
+# returns the last item,
+my_list[-2]
+# returns the second last item
+
+my_list[start:end:step]
+# returns a list of all items beginning at the given starting point up to but not including the end point, counting by intervals of step
+# if start is left blank, it starts from the very beginning
+# if end is left blank, it goes until the very end
+# if step is left blank it goes by steps of +1
+
+my_list.append(value)
+# adds x to the end of the list
+
+my_list.extend(other_list)
+# adds all the items in other_list to the end of my_list
+
+my_list.insert(index, value)
+# adds an item into the list before the item at the given index
+
+my_list.remove(x)
+# removes the first item with value x
+# if it does not exist an error will occour
+
+my_list.pop(index)
+# removes and returns the item at the given index
+# if no index is given, the last item will be popped
+
+my_list.clear()
+# removes all items in the list
+
+my_list.index(value[, start[, end]])
+# returns the index of the first item with the given value
+# error if none is found
+
+my_list.count(value)
+# returns the number of times the given value appears in the list
+
+my_list.sort(key=None, reverse=False)
+# sorts the list
+
+my_list.sort(key=lambda x: x[2])
+# sorts the list by the third element of each item in the list
+
+my_list.reverse()
+# reverses the list
+
+my_list.copy()
+# or
+my_list[:]
+# returns a shallow copy
+\end{lstlisting}
+
+\subsection{Stacks}
+\begin{lstlisting}
+stack = []
+
+# push:
+stack.append(value)
+
+# pop:
+stack.pop()
+\end{lstlisting}
+
+\subsection{Queues}
+\begin{lstlisting}
+from collections import deque
+
+queue = deque()
+
+# enqueue:
+queue.append(value)
+
+# dequeue:
+queue.popleft()
+\end{lstlisting}
+
+\subsection{Priority Queues}
+\subsubsection{Without Removal}
+\begin{lstlisting}
+import heapq
+
+class PriorityQueueSimple(list):
+	def insert(self, item, priority):
+		heapq.heappush(self, (priority, item))
+
+	def popmin(self):
+		return heapq.heappop(self) # tuple of (priority, item)
+\end{lstlisting}
+
+\subsubsection{With Removal}
+\begin{lstlisting}
+import heapq
+
+class PriorityQueue():
+	def __init__(self):
+		self._heap = []
+		self._item_to_entry = {}
+		self._counter = itertools.count()
+
+	def insert(self, item, priority):
+		if item in self._item_to_entry:
+			self.remove(item)
+		count = next(self._counter)
+		entry = [priority, count, item]
+		self._item_to_entry[item] = entry
+		heapq.heappush(self._heap, entry)
+
+	def popmin(self):
+		while self._heap:
+			priority, _, task = heapq.heappop(self._heap)
+			if task is not None:
+				del self._item_to_entry[task]
+				return task
+		raise KeyError("Pop from empty queue")
+
+	def remove(self, item):
+		entry = self._item_to_entry.pop(item)
+		entry[-1] = None
+
+	def __bool__(self):
+		return bool(self._heap)
+
+	def __repr__(self):
+		return repr(self._heap)
+\end{lstlisting}
+
+\subsection{Dictionaries}
+
+\subsection{Sets}
+
+\section{Graphs}
+\subsection{Data Structure}
+\begin{lstlisting}
+class Edge():
+	def __init__(self, edgefrom, edgeto, weight=1):
+		self._from = edgefrom
+		self._to = edgeto
+		self._weight = weight
+
+	def getFrom(self):
+		return self._from
+
+	def getTo(self):
+		return self._to
+
+	def getWeight(self):
+		return self._weight
+
+	def __lt__(self, other):
+		return self._weight < other.getWeight()
+
+	def __repr__(self):
+		return "<Edge: "+str(self._from)+" -> "+str(self._to)+", weight="+str(self._weight)+">"
+
+class Digraph():
+	def __init__(self, vertecies):
+		self._nodes = [set() for i in range(vertecies)]
+
+	def add_vertex(self):
+		self._nodes.append(set())
+
+	def add_edge(self, edgefrom, edgeto):
+		self._nodes[edgefrom].add(Edge(edgefrom, edgeto, 1))
+
+	def adjacent(self, vertex):
+		return iter(self._nodes[vertex])
+
+	def degree(self, vertex):
+		return len(self._nodes[vertex])
+
+	def num_vertecies(self):
+		return len(self._nodes)
+
+	def num_edges(self):
+		return sum(len(edges) for edges in self._nodes)
+
+	def __str__(self):
+		return str(self._nodes)
+
+class UndirectedGraph(Digraph):
+	def add_edge(self, edgefrom, edgeto):
+		self._nodes[edgefrom].add(Edge(edgefrom, edgeto, 1))
+		self._nodes[edgeto].add(Edge(edgeto, edgefrom, 1))
+
+class WeightedDigraph(Digraph):
+	def add_edge(self, edgefrom, edgeto, weight):
+		self._nodes[edgefrom].add(Edge(edgefrom, edgeto, weight))
+
+class WeightedUndirectedGraph(WeightedDigraph):
+	def add_edge(self, v1, v2, weight):
+		self._nodes[v1].add(Edge(v1, v2, weight))
+		self._nodes[v2].add(Edge(v2, v1, weight))
+\end{lstlisting}
+
+\subsection{Algorithms}
+
+
+\end{document}
