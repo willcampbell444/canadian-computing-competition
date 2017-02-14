@@ -1,6 +1,6 @@
 \documentclass[12pt]{article}
 
-\title{Canadien Computing Contest Notes}
+\title{Canadian Computing Contest Notes}
 \author{Will Campbell}
 
 \usepackage{amsmath}
@@ -119,7 +119,6 @@ queue.popleft()
 \end{lstlisting}
 
 \subsection{Priority Queues}
-\subsubsection{Without Removal}
 \begin{lstlisting}
 import heapq
 
@@ -131,46 +130,79 @@ class PriorityQueueSimple(list):
 		return heapq.heappop(self) # tuple of (priority, item)
 \end{lstlisting}
 
-\subsubsection{With Removal}
+\subsection{Dictionaries}
 \begin{lstlisting}
-import heapq
+my_dict = {}
 
-class PriorityQueue():
-	def __init__(self):
-		self._heap = []
-		self._item_to_entry = {}
-		self._counter = itertools.count()
+del my_dict[key]
+# removes the element with the given key
 
-	def insert(self, item, priority):
-		if item in self._item_to_entry:
-			self.remove(item)
-		count = next(self._counter)
-		entry = [priority, count, item]
-		self._item_to_entry[item] = entry
-		heapq.heappush(self._heap, entry)
+key in my_dict
+# True if key is a key in the dictionary
 
-	def popmin(self):
-		while self._heap:
-			priority, _, task = heapq.heappop(self._heap)
-			if task is not None:
-				del self._item_to_entry[task]
-				return task
-		raise KeyError("Pop from empty queue")
+my_dict.items()
+# returns a view of (key, value) pairs
 
-	def remove(self, item):
-		entry = self._item_to_entry.pop(item)
-		entry[-1] = None
+my_dict.keys()
+# returns a view of the keys in the dictionary
 
-	def __bool__(self):
-		return bool(self._heap)
+my_dict.pop(key)
+# removes and returns the item with the given key
 
-	def __repr__(self):
-		return repr(self._heap)
+my_dict.setdefault(key[, default])
+# if key is in the dictionary, return its value
+# if not, insert key with a value of default and return default
+# default defaults to None
+
+my_dict.update(other_dict)
+# update my_dict to hold all the key, value pairs in other_dict
+
+my_dict.values()
+# returns a view of the values in the dict
 \end{lstlisting}
 
-\subsection{Dictionaries}
-
 \subsection{Sets}
+\begin{lstlisting}
+my_set = set()
+my_set = {"a", "bb", "etc"}
+
+value in my_set
+# checks if value is in the set
+
+my_set.isdisjoint(other_set)
+# True if the sets do not share any elements
+
+my_set.issubset(other_set)
+# True if every element in the my_set is in other_set
+
+my_set | other_set
+# returns a set of everything in either set
+
+my_set & other_set
+# returns a set of every item that appears in both sets
+
+my_set - other_set
+# returns a set of elements that are in my_set but not in other_set
+
+my_set ^ other_set
+# returns a set of any item that only appears in one of the sets, not both
+
+my_set.copy()
+# returns a shallow copy of my_set
+
+my_set.add(value)
+# adds value to the set
+
+my_set.remove(value)
+# removes value from the set
+# throws an error if it's not there
+
+my_set.discard(value)
+# removes value if it is in the set
+
+my_set.pop()
+# removes and returns an arbitrary element
+\end{lstlisting}
 
 \section{Graphs}
 \subsection{Data Structure}
@@ -237,6 +269,113 @@ class WeightedUndirectedGraph(WeightedDigraph):
 \end{lstlisting}
 
 \subsection{Algorithms}
+\subsubsection{Breadth First Search}
+\begin{lstlisting}
+class BFS():
+	def __init__(self, graph, start):
+		self._distTo = [-1 for _ in range(graph.num_vertecies())]
+		self._touched = [False for _ in range(graph.num_vertecies())]
+		self._from = [-1 for _ in range(graph.num_vertecies())]
+		self._start = start
 
+		self._distTo[start] = 0
+		self._touched[start] = True
+
+		queue = deque()
+		queue.append(start)
+
+		while queue:
+			vertex = queue.popleft()
+			for v in graph.adjacent(vertex):
+				if not self._touched[v.getTo()]:
+					queue.append(v.getTo())
+					self._distTo[v.getTo()] = self._distTo[vertex]+1
+					self._touched[v.getTo()] = True
+					self._from[v.getTo()] = vertex
+
+	def isReachable(self, vertex):
+		return self._touched[vertex]
+
+	def distanceTo(self, vertex):
+		return self._distTo[vertex]
+
+	def pathTo(self, vertex):
+		path = []
+		pos = vertex
+		while pos != self._start:
+			path.append(pos)
+			pos = self._from[pos]
+		path.append(pos)
+		path.reverse()
+		return path
+\end{lstlisting}
+
+\subsubsection{Depth First Search}
+\begin{lstlisting}
+class DFS():
+	def __init__(self, graph, start):
+		self._distTo = [-1 for _ in range(graph.num_vertecies())]
+		self._touched = [False for _ in range(graph.num_vertecies())]
+		self._from = [-1 for _ in range(graph.num_vertecies())]
+		self._start = start
+
+		self._touched[start] = True
+		self._distTo[start] = 0
+		self.search(graph, start)
+
+	def search(self, graph, node):
+		for e in graph.adjacent(node):
+			if not self._touched[e.getTo()]:
+				self._touched[e.getTo()] = True
+				self._from[e.getTo()] = node
+				self._distTo[e.getTo()] = 1 + self._distTo[node]
+				self.search(e.getTo())
+
+	def isReachable(self, vertex):
+		return self._touched[vertex]
+
+	def distanceTo(self, vertex):
+		return self._distTo[vertex]
+
+	def pathTo(self, vertex):
+		path = []
+		pos = vertex
+		while pos != self._start:
+			path.append(pos)
+			pos = self._from[pos]
+		path.append(pos)
+		path.reverse()
+		return path
+\end{lstlisting}
+
+\subsubsection{Minumum Spanning Tree}
+\begin{lstlisting}
+class MST():
+	def __init__(self, graph):
+		self._touched = [False for _ in range(graph.num_vertecies())]
+		self._v = graph.num_vertecies()
+		self._edges = []
+
+		pq = PriorityQueue()
+
+		for e in graph.adjacent(0):
+			pq.insert(e)
+		self._touched[0] = True
+
+		while pq.notEmpty():
+			edge = pq.popmin()
+			if not self._touched[edge.getTo()]:
+				for e in graph.adjacent(edge.getTo()):
+					if not self._touched[e.getTo()]:
+						pq.insert(e)
+				self._touched[edge.getTo()] = True
+				self._edges.append(edge)
+
+	def getGraph(self):
+		graph = WeightedUndirectedGraph(self._v)
+		for e in self._edges:
+			graph.add_edge(e.getFrom(), e.getTo(), e.getWeight())
+		return graph
+\end{lstlisting}
 
 \end{document}
