@@ -12,10 +12,10 @@ class Graph():
 		self.nodes[a].append(b)
 		self.nodes[b].append(a)
 
-	def adj(self, a):
+	def adjacent(self, a):
 		return iter(self.nodes[a])
 
-inp = sys.stdin.read().strip().split()
+inp = sys.stdin.readlines()
 inp.pop()
 
 g = Graph(26)
@@ -26,7 +26,7 @@ for x in inp:
 class BFS():
 	def __init__(self, graph, start):
 		self.marked = [False for _ in range(26)]
-		self.path_to = [-1 for _ in range(26)]
+		self.path_to = [-1 for _ in range(26)] # stores the previous node in the path
 		self.start = start
 		queue = deque()
 		queue.append(start)
@@ -34,12 +34,12 @@ class BFS():
 
 		while queue:
 			x = queue.popleft()
-			for i in graph.adj(x):
+			for i in graph.adjacent(x):
 				if not self.marked[i]:
 					self.marked[i] = True
 					self.path_to[i] = x
 					queue.append(i)
-
+	# get the path from the starting point to node x69
 	def getPath(self, x):
 		stuff = [x]
 		while x != self.start and x != -1:
@@ -48,7 +48,9 @@ class BFS():
 		stuff.reverse()
 		return stuff
 
-def pathWithout(graph, a, b):
+# checks if there is a path from A to B without the edge from node n1 to n2
+# uses BFS
+def pathWithout(graph, n1, n2):
 	marked = [False for _ in range(26)]
 	path_to = [-1 for _ in range(26)]
 	queue = deque()
@@ -57,8 +59,8 @@ def pathWithout(graph, a, b):
 
 	while queue:
 		x = queue.popleft()
-		for i in graph.adj(x):
-			if not ((x == a and i == b) or (x == b and i == a)):
+		for i in graph.adjacent(x):
+			if not ((x == n1 and i == n2) or (x == n2 and i == n1)):
 				if i == 1:
 					return True
 				if not marked[i]:
@@ -68,9 +70,11 @@ def pathWithout(graph, a, b):
 	return False
 
 b = BFS(g, 0)
-path = b.getPath(1)
+path = b.getPath(1) # shortest path from A to B
 count = 0
+# go through each edge on the path
 for n in range(len(path)-1):
+	# if you can not get from A to B with the edge removed, print the edge
 	if not pathWithout(g, path[n], path[n+1]):
 		count += 1
 		print(alph[path[n]]+alph[path[n+1]])
