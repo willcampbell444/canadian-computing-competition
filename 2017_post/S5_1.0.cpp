@@ -2,8 +2,15 @@
 
 int count(int* populations, int min, int max) {
 	int sum = 0;
-	for (int i = min; i < max; i++) {
-		sum += populations[i];
+	if (max - min > 5000) {
+		#pragma omp parallel for reduction (+:sum)
+		for (int i = min; i < max; i++) {
+			sum += populations[i];
+		}
+	} else {
+		for (int i = min; i < max; i++) {
+			sum += populations[i];
+		}
 	}
 	return sum;
 }
